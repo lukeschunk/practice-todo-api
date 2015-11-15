@@ -1,31 +1,24 @@
 var express = require('express');
+var bodyParser = require('body-parser');
+
 var app = express();
 var PORT = process.env.PORT || 3000;
-var todos = [{
+//some built in Todos
+var todos = [];
+var todoNextId = 1; //this variable will be used to increment our ID so when we add new ones they get their own ID (note this isn't secure)
 
-        id: 1, //databases will add this attribute
-        description: 'Meet Mom For Lunch',
-        completed: false
-        },
+app.use(bodyParser.json()); // this is setting up some App Level Middle Ware - Now everytime a json request comes in, express will parse it and we'll be able to access it via req.body
 
-    {
-        id: 2,
-        description: 'go to market',
-        completed: false
-        },
-    {
-        id: 3,
-        description: 'pick up paige',
-        completed: true
-            }];
 
 app.get('/', function (req, res) {
     res.send('ToDo Api Root');
 });
 
-//GET /TODOS
+//_____________________________________________GET METHODS _____________________________________________
+
+
 app.get('/todos', function (req, res) {
-    res.json(todos);
+    res.json(todos); //at this url, it sends back our todos array, and makes it json
 });
 
 app.get('/todos/:id', function (req, res) {
@@ -48,6 +41,25 @@ app.get('/todos/:id', function (req, res) {
 
 
 
+//_____________________________________________POST METHODS _____________________________________________
+
+
+app.post('/todos', function(req, res) {
+    var body = req.body; //this gets the body of the post request (as opposed to the header)
+//    console.log('description' + body.description); //this is accessing the key on the body that is description
+    
+    body.id = todoNextId;
+    todoNextId++;
+    
+    todos.push(body);
+
+    res.json(body); //this regurgitates the info back to the person that posted it
+});
+
+
+
+
+//_____________________________________________LISTENING ON PORT _____________________________________________
 app.listen(PORT, function () {
     console.log('Express Listening on port' + PORT);
 });
