@@ -1,8 +1,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var _ = require('underscore');
 
 var app = express();
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 3000; 
 //some built in Todos
 var todos = [];
 var todoNextId = 1; //this variable will be used to increment our ID so when we add new ones they get their own ID (note this isn't secure)
