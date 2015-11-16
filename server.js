@@ -61,7 +61,23 @@ app.post('/todos', function(req, res) {
     res.json(body); //this regurgitates the info back to the person that posted it
 });
 
+//_____________________________________________DELETE METHODS _____________________________________________
 
+app.delete('/todos/:id', function(req, res) {
+    var todoId = parseInt(req.params.id, 10);
+    var matchedTodo = _.findWhere(todos, {id: todoId});
+    
+    
+    console.log("this is matched todo", matchedTodo);
+    if(!matchedTodo) {
+        res.status(404).json({"error": "no todo found with that Id"});
+    } else {
+        todos = _.without(todos, matchedTodo); 
+        res.json(matchedTodo);
+    }
+    
+    
+});
 
 
 //_____________________________________________LISTENING ON PORT _____________________________________________
