@@ -24,13 +24,8 @@ app.get('/todos', function (req, res) {
 
 app.get('/todos/:id', function (req, res) {
     var todoId = parseInt(req.params.id, 10); //req.params always comes back as a string, so if you're expecting a number, you have to convert
-    var matchedTodo;
     
-    todos.forEach(function(todo) { //todo is one of the [i]'s in todos
-        if(todoId === todo.id) {
-            matchedTodo = todo;
-        } 
-    });
+    var matchedTodo = _.findWhere(todos, {id: todoId}); //underscore code that finds where it is 
     
     if(matchedTodo) {
         res.json(matchedTodo); //this Json method is a handy shortcut that makes it easy for you to send back json data
@@ -46,8 +41,17 @@ app.get('/todos/:id', function (req, res) {
 
 
 app.post('/todos', function(req, res) {
-    var body = req.body; //this gets the body of the post request (as opposed to the header)
-//    console.log('description' + body.description); //this is accessing the key on the body that is description
+    var body = _.pick(req.body, 'description', 'completed'); //this gets the body of the post request (as opposed to the header) & //THIS IS GOING TO LEAVE OFF ALL EXTRA DATA
+
+    
+    
+    //NOW WE'RE GOING TO CHECK TO MAKE SURE WHAT THE USER POSTED HAS THE PROPER KEY/VALUE PAIRS
+    
+    if(!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) { //this is checking to see if the value of the body.completed is a boolean
+        return res.status(400).send(); //400 means it can't be completed. this returns the status and an empty body send();
+    }
+    
+    body.description = body.description.trim();
     
     body.id = todoNextId;
     todoNextId++;
